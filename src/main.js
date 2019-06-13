@@ -11,10 +11,31 @@ import router from './router'
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
 
+axios.defaults.withCredentials =  true;
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
   components: { App },
   template: '<App/>'
+})
+
+router.beforeEach((to, from, next) => {
+  if(to.meta.requiresAuth){
+    const vm = this;
+    const api = `${process.env.APIPATH}/api/user/check`;
+    axios.post(api).then((response) => {
+        console.log(response.data);
+        if(response.data.success){
+          next();
+        }else{
+          next({
+            path: '/login',
+          })
+        }
+    })
+  }else{
+    next();
+  }
 })

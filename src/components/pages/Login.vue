@@ -31,8 +31,8 @@ export default {
     methods: {
         signin(){
             const vm = this;
-            const api = `${process.env.APIPATH}/signin`;
-            this.axios.post(api, vm.user).then((response) => {
+            const api = `${process.env.APIPATH}/admin/signin`;
+            this.$http.post(api, vm.user).then((response) => {
                 console.log(response.data);
                 if(response.data.success){
                     vm.$router.push('/')

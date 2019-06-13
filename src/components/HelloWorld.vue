@@ -15,7 +15,7 @@ export default {
     signout(){
       const api = `${process.env.APIPATH}/logout`;
       const vm = this;
-      this.axios.post(api).then((response) => {
+      this.$http.post(api).then((response) => {
           console.log(response.data);
           if(response.data.success){
               vm.$router.push('/login')
