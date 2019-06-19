@@ -1,9 +1,9 @@
 <template>
     <div>
+        <loading :active.sync="isLoading"></loading>
         <div class="text-right mt-4">
             <button class="btn btn-primary" @click="openModal(true)">建立新的產品</button>
         </div>
-    
 
         <table class="table mt-4">
             <thead>
@@ -53,7 +53,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="customFile">或 上傳圖片
-                                        <i class="fas fa-spinner fa-spin"></i>
+                                        <i class="fas fa-spinner fa-spin" v-if="status.fileUploading"></i>
                                     </label>
                                     <input type="file" id="customFile" class="form-control" ref="files" @change="uploadFile()">
                                 </div>
@@ -148,15 +148,21 @@ export default {
         return{
             products: [],
             tmpProduct: {},
-            isNew: false
+            isNew: false,
+            isLoading: false,
+            status: {
+                fileUploading: false
+            }
         }
     },
     methods: {
         getProducts(){
             const vm = this;
             const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/products/all`;
+            vm.isLoading = true;
             this.$http.get(api).then((response) => {
-                vm.products = response.data.products
+                vm.products = response.data.products;
+                vm.isLoading = false;
             })
         },
         updateProduct(){
@@ -216,6 +222,7 @@ export default {
             const formData = new FormData();
             formData.append('file-to-upload', uploadedFile);
             const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/upload`; 
+            vm.status.fileUploading = true;
             this.$http.post(url, formData, {
                 headers:{
                     'Content-Type': 'multipart/form-data'
@@ -226,6 +233,7 @@ export default {
                     vm.$set(vm.tmpProduct, 'imageUrl', response.data.imageUrl)
                 }
                 console.log(vm.tmpProduct)
+                vm.status.fileUploading = false
             })
         }
     },
