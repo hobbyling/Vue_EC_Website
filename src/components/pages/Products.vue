@@ -231,6 +231,8 @@ export default {
                 console.log(response.data);
                 if(response.data.success){
                     vm.$set(vm.tmpProduct, 'imageUrl', response.data.imageUrl)
+                }else{
+                    this.$bus.$emit('message:push', response.data.message, 'danger')
                 }
                 console.log(vm.tmpProduct)
                 vm.status.fileUploading = false
