@@ -32,6 +32,8 @@
             </tbody>
         </table>
 
+        <Pagination :pagination='pagination' @change-page='getProducts'/>
+
         <!-- update Modal -->
         <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
@@ -142,11 +144,16 @@
 
 <script>
 import $ from 'jquery';
+import Pagination from '../Pagination'
 
 export default {
+    components: {
+        Pagination
+    },
     data(){
         return{
             products: [],
+            pagination: {},
             tmpProduct: {},
             isNew: false,
             isLoading: false,
@@ -156,12 +163,14 @@ export default {
         }
     },
     methods: {
-        getProducts(){
+        getProducts(page = 1){
             const vm = this;
-            const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/products/all`;
+            const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/products?page=${page}`;
             vm.isLoading = true;
             this.$http.get(api).then((response) => {
+                console.log(response);
                 vm.products = response.data.products;
+                vm.pagination = response.data.pagination;
                 vm.isLoading = false;
             })
         },
