@@ -12,7 +12,7 @@
                 <th width="120">原價</th>
                 <th width="120">售價</th>
                 <th width="100">是否啟用</th>
-                <th width="120">編輯</th>
+                <th width="120">動作</th>
             </thead>
             <tbody>
                 <tr v-for="(item, key) in products" :key="key">
@@ -40,7 +40,8 @@
                 <div class="modal-content border-0">
                     <div class="modal-header bg-dark text-white">
                         <h5 class="modal-title" id="exampleModalLabel">
-                            <span>新增產品</span>
+                            <span v-if="isNew">新增產品</span>
+                            <span v-else>編輯產品</span>
                         </h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
@@ -183,18 +184,17 @@ export default {
                 api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/product/${vm.tmpProduct.id}`;
                 httpMethod = 'put';
             }
-                this.$http[httpMethod](api, {data: vm.tmpProduct}).then((response) => {
-                    console.log(response.data)
-                    if(response.data.success){
-                        $('#productModal').modal('hide');
-                        vm.getProducts();
-                    }else{
-                        $('#productModal').modal('hide');
-                        vm.getProducts();
-                        console.log('新增失敗');
-                    }
-                })
-            
+            this.$http[httpMethod](api, {data: vm.tmpProduct}).then((response) => {
+                console.log(response.data)
+                if(response.data.success){
+                    $('#productModal').modal('hide');
+                    vm.getProducts();
+                }else{
+                    $('#productModal').modal('hide');
+                    vm.getProducts();
+                    console.log('新增失敗');
+                }
+            })
         },
         deleteProduct(){
             const vm = this;
@@ -207,7 +207,7 @@ export default {
                 }else{
                     $('#delProductModal').modal('hide');
                     vm.getProducts();
-                    console.log('新增失敗');
+                    console.log('刪除失敗');
                 }
             })
         },

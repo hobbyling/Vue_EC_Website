@@ -42,37 +42,37 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(item, key) in carts" :key="key">
+                    <tr v-for="(item, key) in carts.carts" :key="key">
                         <td>
-                            <button class="btn btn-outline-danger">
+                            <button class="btn btn-outline-danger" @click="removeCartItem(item.id)">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
                         </td>
                         <td>
-                            <span>{{item.product.title}}</span></br>
-                            <span v-if="item.coupon" class="text-success">已套用優惠券</span>
+                            <span>{{item.product.title}}</span>
+                            <div v-if="item.coupon" class="text-success">
+                                已套用優惠券
+                            </div>
                         </td>
                         <td>{{item.product.num}} / {{item.product.unit}}</td>
                         <td>{{item.product.price}}</td>
                     </tr>
                     <tr>
-                        <td></td>
-                        <td></td>
-                        <td class="text-right">總計</td>
-                        <td>{{total}}</td>
+                        <td colspan="3" class="text-right">總計</td>
+                        <td>{{carts.total}}</td>
                     </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td class="text-success text-right">折扣價</td>
-                        <td class="text-success">{{finalTotal}}</td>
+                    <tr v-if="carts.final_total != carts.total">
+                        <td colspan="3" class="text-success text-right">折扣價</td>
+                        <td class="text-success">{{carts.final_total}}</td>
                     </tr>
                 </tbody>
             </table>
             <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="請輸入優惠碼"  aria-describedby="button-addon2">
+                <input type="text" class="form-control" v-model="coupon_code" placeholder="請輸入優惠碼">
                 <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button" id="button-addon2">套用優惠碼</button>
+                    <button class="btn btn-outline-secondary" type="button" @click="addCouponCode()">
+                        套用優惠碼
+                    </button>
                 </div>
             </div>
         </div>
@@ -136,7 +136,8 @@ export default {
             isLoading: false,
             status:{
                 loadingItem: '',
-            }
+            },
+            coupon_code: ''
         }
     },
     created(){
@@ -187,9 +188,31 @@ export default {
             vm.isLoading = true;
             this.$http.get(api).then((response) => {
                 console.log(response);
-                vm.carts = response.data.data.carts;
-                vm.total = response.data.data.total;
-                vm.finalTotal = response.data.data.final_total;
+                vm.carts = response.data.data;
+                vm.isLoading = false;
+                
+            })
+        },
+        removeCartItem(id){
+            const vm = this;
+            const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart/${id}`;
+            vm.isLoading = true;
+            this.$http.delete(api).then(() => {
+                vm.getCart();
+                vm.isLoading = false;
+                
+            })
+        },
+        addCouponCode(){
+            const vm = this;
+            const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/coupon`;
+            const coupon = {
+                code: vm.coupon_code
+            }
+            vm.isLoading = true;
+            this.$http.post(api, coupon).then((response) => {
+                console.log(response.data);
+                vm.getCart();
                 vm.isLoading = false;
                 
             })
