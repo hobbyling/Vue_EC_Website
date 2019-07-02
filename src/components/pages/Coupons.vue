@@ -7,16 +7,14 @@
 
         <table class="table mt-4">
             <thead>
-                <th>編碼</th>
                 <th>名稱</th>
-                <th width="80">折數</th>
+                <th width="80">折扣百分比</th>
                 <th width="100">是否啟用</th>
                 <th width="150">到期日</th>
                 <th width="150">動作</th>
             </thead>
             <tbody>
                 <tr v-for="(item, key) in coupons" :key="key">
-                    <td>{{item.num}}</td>
                     <td>{{item.title}}</td>
                     <td>{{item.percent}}</td>
                     <td>

@@ -12,6 +12,7 @@ import App from './App'
 import router from './router'
 import './bus'
 import currencyFilter from './filters/currency'
+import dateFilter from './filters/date'
 
 
 
@@ -21,6 +22,7 @@ Vue.use(VeeValidate);
 VeeValidate.Validator.localize('zhTW', zhTWValidate);
 Vue.component('Loading', Loading);
 Vue.filter('currency', currencyFilter);
+Vue.filter('date', dateFilter);
 
 axios.defaults.withCredentials =  true;
 
