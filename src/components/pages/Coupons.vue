@@ -8,7 +8,8 @@
         <table class="table mt-4">
             <thead>
                 <th>名稱</th>
-                <th width="80">折扣百分比</th>
+                <th>代碼</th>
+                <th width="100">折扣百分比</th>
                 <th width="100">是否啟用</th>
                 <th width="150">到期日</th>
                 <th width="150">動作</th>
@@ -16,6 +17,7 @@
             <tbody>
                 <tr v-for="(item, key) in coupons" :key="key">
                     <td>{{item.title}}</td>
+                    <td>{{item.code}}</td>
                     <td>{{item.percent}}</td>
                     <td>
                         <span v-if="item.is_enabled == 1" class="text-success">啟用</span>
@@ -46,18 +48,28 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-sm-12">
-                                <div class="form-group">
-                                    <label for="title">標題</label>
-                                    <input type="text" class="form-control" id="title" placeholder="請輸入標題" v-model="tmpCoupon.title">
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="title">標題</label>
+                                        <input type="text" name="title" class="form-control" id="title" placeholder="請輸入標題" v-model="tmpCoupon.title" v-validate="'required'">
+                                        <span class="text-danger" v-if="errors.has('title')">{{errors.first('title') }}</span>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="title">代碼</label>
+                                        <input type="text" name="code" class="form-control" id="title" placeholder="請輸入代碼" v-model="tmpCoupon.code" v-validate="'required'">
+                                        <span class="text-danger" v-if="errors.has('code')">{{errors.first('code') }}</span>
+                                    </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label for="category">折數</label>
-                                        <input type="number" class="form-control" id="category" placeholder="請輸入折數" v-model="tmpCoupon.percent">
+                                        <input type="number" name="percent" class="form-control" id="category" placeholder="請輸入折數" v-model="tmpCoupon.percent" v-validate="'required'">
+                                        <span class="text-danger" v-if="errors.has('percent')">{{errors.first('percent') }}</span>
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="price">到期日</label>
-                                        <input type="date" class="form-control" id="unit" placeholder="請輸入到期日" v-model="tmpCoupon.due_date">
+                                        <input type="date" name="due_date" class="form-control" id="unit" placeholder="請輸入到期日" v-model="tmpCoupon.due_date" v-validate="'required'">
+                                        <span class="text-danger" v-if="errors.has('due_date')">{{errors.first('due_date') }}</span>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -141,15 +153,21 @@ export default {
                 api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/coupon/${vm.tmpCoupon.id}`;
                 httpMethod = 'put';
             }
-            this.$http[httpMethod](api, {data: vm.tmpCoupon}).then((response) => {
-                console.log(response.data)
-                if(response.data.success){
-                    $('#couponModal').modal('hide');
-                    vm.getCoupons();
+            this.$validator.validate().then((valid) => {
+                if (valid) {
+                    this.$http[httpMethod](api, {data: vm.tmpCoupon}).then((response) => {
+                        console.log(response.data)
+                        if(response.data.success){
+                            $('#couponModal').modal('hide');
+                            vm.getCoupons();
+                        }else{
+                            $('#couponModal').modal('hide');
+                            vm.getCoupons();
+                            console.log('新增失敗');
+                        }
+                    })
                 }else{
-                    $('#couponModal').modal('hide');
-                    vm.getCoupons();
-                    console.log('新增失敗');
+                    console.log('欄位不完整')
                 }
             })
         },

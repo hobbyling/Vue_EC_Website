@@ -96,7 +96,7 @@
                     <label for="usertel">收件人電話</label>
                     <input type="tel" class="form-control" name="tel" id="usertel" :class="{'is-invalid':errors.has('tel')}" v-validate="'required|numeric'" 
                         v-model="form.user.tel" placeholder="請輸入電話">
-                        <span class="text-danger" v-if="errors.has('tel')">{{errors.first('tel') }}</span>
+                    <span class="text-danger" v-if="errors.has('tel')">{{errors.first('tel') }}</span>
                 </div>
             
                 <div class="form-group">
@@ -258,11 +258,10 @@ export default {
                 code: vm.coupon_code
             }
             vm.isLoading = true;
-            this.$http.post(api, coupon).then((response) => {
+            this.$http.post(api, {data: coupon}).then((response) => {
                 console.log(response.data);
                 vm.getCart();
                 vm.isLoading = false;
-                
             })
         },
         createOrder(){

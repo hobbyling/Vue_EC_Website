@@ -6,8 +6,10 @@ import VueAxios from 'vue-axios'
 import VeeValidate from 'vee-validate';
 import zhTWValidate from 'vee-validate/dist/locale/zh_TW';
 import Loading from 'vue-loading-overlay';
+import VueI18n from 'vue-i18n';
 import 'vue-loading-overlay/dist/vue-loading.css';
 import 'bootstrap'
+
 import App from './App'
 import router from './router'
 import './bus'
@@ -19,6 +21,7 @@ import dateFilter from './filters/date'
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios);
 Vue.use(VeeValidate);
+Vue.use(VueI18n);
 VeeValidate.Validator.localize('zhTW', zhTWValidate);
 Vue.component('Loading', Loading);
 Vue.filter('currency', currencyFilter);

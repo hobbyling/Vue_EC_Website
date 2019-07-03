@@ -65,28 +65,33 @@
                             <div class="col-sm-8">
                                 <div class="form-group">
                                     <label for="title">標題</label>
-                                    <input type="text" class="form-control" id="title" placeholder="請輸入標題" v-model="tmpProduct.title">
+                                    <input type="text" name="title" class="form-control" id="title" placeholder="請輸入標題" v-model="tmpProduct.title" v-validate="'required'">
+                                    <span class="text-danger" v-if="errors.has('title')">{{errors.first('title') }}</span>
                                 </div>
 
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label for="category">分類</label>
-                                        <input type="text" class="form-control" id="category" placeholder="請輸入分類" v-model="tmpProduct.category">
+                                        <input type="text" name="category" class="form-control" id="category" placeholder="請輸入分類" v-model="tmpProduct.category" v-validate="'required'">
+                                        <span class="text-danger" v-if="errors.has('category')">{{errors.first('category') }}</span>
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="price">單位</label>
-                                        <input type="unit" class="form-control" id="unit" placeholder="請輸入單位" v-model="tmpProduct.unit">
+                                        <input type="unit" name="unit" class="form-control" id="unit" placeholder="請輸入單位" v-model="tmpProduct.unit" v-validate="'required'">
+                                        <span class="text-danger" v-if="errors.has('unit')">{{errors.first('unit') }}</span>
                                     </div>
                                 </div>
 
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label for="origin_price">原價</label>
-                                        <input type="number" class="form-control" id="origin_price" placeholder="請輸入原價" v-model="tmpProduct.origin_price">
+                                        <input type="number" class="form-control" id="origin_price" placeholder="請輸入原價" v-model="tmpProduct.origin_price" v-validate="'required'">
+                                        <span class="text-danger" v-if="errors.has('origin_price')">{{errors.first('origin_price') }}</span>
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="price">售價</label>
-                                        <input type="number" class="form-control" id="price" placeholder="請輸入售價" v-model="tmpProduct.price">
+                                        <input type="number" class="form-control" id="price" placeholder="請輸入售價" v-model="tmpProduct.price" v-validate="'required'">
+                                        <span class="text-danger" v-if="errors.has('price')">{{errors.first('price') }}</span>
                                     </div>
                                 </div>
                                 <hr>
@@ -184,15 +189,21 @@ export default {
                 api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/product/${vm.tmpProduct.id}`;
                 httpMethod = 'put';
             }
-            this.$http[httpMethod](api, {data: vm.tmpProduct}).then((response) => {
-                console.log(response.data)
-                if(response.data.success){
-                    $('#productModal').modal('hide');
-                    vm.getProducts();
+            this.$validator.validate().then((valid) => {
+                if (valid) {
+                    this.$http[httpMethod](api, {data: vm.tmpProduct}).then((response) => {
+                        console.log(response.data)
+                        if(response.data.success){
+                            $('#productModal').modal('hide');
+                            vm.getProducts();
+                        }else{
+                            $('#productModal').modal('hide');
+                            vm.getProducts();
+                            console.log('新增失敗');
+                        }
+                    })
                 }else{
-                    $('#productModal').modal('hide');
-                    vm.getProducts();
-                    console.log('新增失敗');
+                    console.log('欄位不完整')
                 }
             })
         },
